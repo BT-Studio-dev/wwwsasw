@@ -433,7 +433,7 @@ export function ForgotForm({ panelName, enabled }: { panelName: string; enabled:
       ) : null}
       <form onSubmit={onSubmit} className="text-left">
         <label className={`mt-1 ${labelCls}`} htmlFor="forgot-id">
-          Email
+          Username or Email
         </label>
         <input
           id="forgot-id"
@@ -446,8 +446,8 @@ export function ForgotForm({ panelName, enabled }: { panelName: string; enabled:
           spellCheck={false}
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
-          placeholder="you@gmail.com"
-          autoComplete="email"
+          placeholder="admin or admin@example.com"
+          autoComplete="username"
           required
         />
         <ErrorNote message={error} />

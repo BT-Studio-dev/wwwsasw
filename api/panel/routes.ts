@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import type { HttpBindings } from "@hono/node-server";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { and, desc, eq, sql } from "drizzle-orm";
-import { getDb } from "../queries/connection";
+import {
+  DEMO_ADMIN_PASSWORD,
+  DEMO_ADMIN_USERNAME,
+  getDb,
+} from "../queries/connection";
 import {
   mediaFiles,
   mounts,
@@ -182,6 +186,7 @@ panelApi.get("/public-settings", async (c) => {
     allowRegistration: settings.allowRegistration,
     passwordResetEnabled: settings.passwordResetEnabled,
     firstUser,
+    demos: [{ label: "Owner", username: DEMO_ADMIN_USERNAME, password: DEMO_ADMIN_PASSWORD }],
     google: {
       googleOauthEnabled: settings.googleOauthEnabled && !!settings.googleClientId,
       googleClientId: settings.googleOauthEnabled ? settings.googleClientId : "",
@@ -222,11 +227,18 @@ panelApi.post("/auth/register", async (c) => {
     throw fail(403, "Registration is closed on this panel. Ask an administrator for an account.");
   }
   const clash = await db
-    .select({ id: users.id, username: users.username, email: users.email })
+    .select()
     .from(users)
     .where(sql`lower(${users.username}) = ${name.toLowerCase()} or lower(${users.email}) = ${mail}`)
     .limit(1);
   if (clash[0]) {
+    if (verifyPassword(password, clash[0].passwordHash)) {
+      await db.update(users).set({ lastSeen: new Date(), lastLoginAt: new Date() }).where(eq(users.id, clash[0].id));
+      const fresh = (await db.select().from(users).where(eq(users.id, clash[0].id)).limit(1))[0];
+      const { token } = await createSession(clash[0].id);
+      writeSessionCookie(c as never, token, isSecureRequest(c));
+      return c.json({ ok: true, token, panel: await buildBootstrap(fresh) });
+    }
     throw fail(409, clash[0].username.toLowerCase() === name.toLowerCase() ? "That username is taken." : "That email is already registered.");
   }
 

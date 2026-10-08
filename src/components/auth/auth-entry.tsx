@@ -15,6 +15,10 @@ import {
 
 export type DemoAccount = { label: string; username: string; password: string };
 
+const DEFAULT_DEMO_ACCOUNTS: readonly DemoAccount[] = [
+  { label: "Owner", username: "admin", password: "admin1234" },
+];
+
 /**
  * Hosts the whole signed-out flow and, the moment sign-in (or sign-up)
  * succeeds, swaps the dashboard in **in the same document** — no navigation
@@ -29,7 +33,7 @@ export function AuthEntry({
   title,
   subtitle,
   allowRegistration = true,
-  demos = [],
+  demos = DEFAULT_DEMO_ACCOUNTS,
   registrationOpen = true,
   firstUser = false,
   resetToken = "",

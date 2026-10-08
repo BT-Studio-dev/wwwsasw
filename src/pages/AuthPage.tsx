@@ -27,6 +27,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" | "forgo
         title="Sign In to {panel}"
         subtitle="Enter your credentials to access the panel"
         allowRegistration={settings.allowRegistration}
+        demos={settings.demos}
         google={settings.google}
       />
     );

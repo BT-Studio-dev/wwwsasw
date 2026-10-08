@@ -27,9 +27,11 @@ dist-ssr
 .env.local
 .env.*.local
 # Database
+.data/
 *.db
 *.sqlite
 *.sqlite3
+*.sqlite-*
 db/migrations/*.sql
 # TypeScript cache
 *.tsbuildinfo

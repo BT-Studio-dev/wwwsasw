@@ -12,6 +12,7 @@ type PublicSettings = {
   allowRegistration: boolean;
   passwordResetEnabled: boolean;
   firstUser: boolean;
+  demos?: { label: string; username: string; password: string }[];
   google: { googleOauthEnabled: boolean; googleClientId: string };
 };
 
@@ -37,6 +38,7 @@ export function usePublicSettings(): PublicSettings | null {
             allowRegistration: true,
             passwordResetEnabled: true,
             firstUser: true,
+            demos: [{ label: "Owner", username: "admin", password: "admin1234" }],
             google: { googleOauthEnabled: false, googleClientId: "" },
           });
       });
